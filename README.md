@@ -6,11 +6,10 @@ A small Spring Boot REST API for managing household chores. It is used as a live
 
 See `interview/tasks.md`. That file tells you what types of issues are in this project and what you need to look into.
 
+# Instructions
 > [!IMPORTANT]
 > Below steps are for Windows
-
 ## What You Need
-
 - OpenJDK 21+ installed and available on your PATH
 
 That is it. Gradle is bundled via the wrapper.
