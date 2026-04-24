@@ -16,7 +16,7 @@ The API runs on `http://localhost:8080`.
 
 ## Exercise
 
-See `tasks.md`. That file tells you what types of issues are in this project and what you need to look into.
+See `interview/tasks.md`. That file tells you what types of issues are in this project and what you need to look into.
 
 ## Build
 
