@@ -1,5 +1,7 @@
 # Spring Cleaning
 
+A small Spring Boot REST API for managing household chores. It is used as a live coding exercise: the codebase contains a fixed set of intentional bugs and code smells for a candidate to find and fix. The API is intentionally kept simple: no database, no security layer, so the focus stays on Java and Spring fundamentals.
+
 ## What You Need
 
 - OpenJDK 21+ installed and available on your PATH
