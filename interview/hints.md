@@ -6,7 +6,7 @@
 
 ## Behaviour
 
-- Hint: an identifier may be treated more literally than it should be.
+- Hint: an identifier is used for something other than what it was intended for.
 - Hint: a request looks guarded on paper, but check what actually happens at runtime.
 - Hint: one successful change does not seem to stay changed.
 - Hint: one summary rule is slightly too eager.
