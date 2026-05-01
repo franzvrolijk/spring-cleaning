@@ -23,12 +23,16 @@ import com.example.my_api.service.ChoreService;
 @RequestMapping("/api/chores")
 public class ChoreController {
 
-    @Autowired
-    private ChoreService choreService;
+    //@Autowired
+    private final ChoreService choreService;
+
+    public ChoreController(ChoreService choreService){
+        this.choreService = choreService;
+    }
 
     @GetMapping("/stats")
     public ChoreStatsResponse getStats() {
-        return choreService.getStatsSummary();
+        return choreService.getStats();
     }
 
     @GetMapping

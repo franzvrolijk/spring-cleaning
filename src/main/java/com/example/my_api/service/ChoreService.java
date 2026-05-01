@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.my_api.model.Priority;
+import com.example.my_api.model.Status;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,10 +23,10 @@ public class ChoreService {
 
     public ChoreService() {
         // Sample data to have something to work with, this is not usually how it would be done in a real application, but it is sufficient for this example
-        chores.add(new Chore(1, "Take bins out", "outside", "LOW", "OPEN", LocalDate.now().minusDays(1), null));
-        chores.add(new Chore(2, "Clean kitchen", "kitchen", "HIGH", "OPEN", LocalDate.now().plusDays(1), null));
-        chores.add(new Chore(4, "Vacuum hall", "hall", "MEDIUM", "DONE", LocalDate.now().minusDays(2), LocalDateTime.now().minusDays(1)));
-        chores.add(new Chore(7, "Dust shelves", "living-room", "LOW", "OPEN", LocalDate.now(), null));
+        chores.add(new Chore(1, "Take bins out", "outside", Priority.LOW, Status.OPEN, LocalDate.now().minusDays(1), null));
+        chores.add(new Chore(2, "Clean kitchen", "kitchen", Priority.HIGH, Status.OPEN, LocalDate.now().plusDays(1), null));
+        chores.add(new Chore(4, "Vacuum hall", "hall", Priority.MEDIUM, Status.DONE, LocalDate.now().minusDays(2), LocalDateTime.now().minusDays(1)));
+        chores.add(new Chore(7, "Dust shelves", "living-room", Priority.LOW, Status.OPEN, LocalDate.now(), null));
     }
 
     public List<Chore> getAll(String status) {
@@ -33,17 +35,20 @@ public class ChoreService {
         }
 
         return chores.stream()
-                .filter(chore -> chore.status().equalsIgnoreCase(status))
+                .filter(chore -> chore.getStatus().toString().equalsIgnoreCase(status))
                 .toList();
     }
 
     public Chore getById(long id) {
-        int index = (int) id;
-        if (index < 0 || index >= chores.size()) {
-            throw new ResponseStatusException(NOT_FOUND, "Chore not found");
-        }
+//        int index = (int) id;
+//        if (index < 0 || index >= chores.size()) {
+//            throw new ResponseStatusException(NOT_FOUND, "Chore not found");
+//        }
 
-        return chores.get(index);
+        return chores.stream()
+                .filter(chore -> chore.getId() == id)
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Chore not found"));
     }
 
     public Chore createChore(CreateChoreRequest request) {
@@ -52,7 +57,7 @@ public class ChoreService {
                 request.title(),
                 request.room(),
                 request.priority(),
-                "OPEN",
+                Status.OPEN,
                 request.dueDate(),
                 null
         );
@@ -63,32 +68,26 @@ public class ChoreService {
 
     public Chore completeChore(long id) {
         Chore existing = chores.stream()
-                .filter(chore -> chore.id() == id)
+                .filter(chore -> chore.getId() == id)
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Chore not found"));
 
-        if ("DONE".equalsIgnoreCase(existing.status())) {
+        if ("DONE".equalsIgnoreCase(existing.getStatus().toString())) {
             return existing;
         }
 
-        Chore updated = new Chore(
-                existing.id(),
-                existing.title(),
-                existing.room(),
-                existing.priority(),
-                "DONE",
-                existing.dueDate(),
-                LocalDateTime.now()
-        );
+        existing.setStatus(Status.DONE);
 
-        return updated;
+        return existing;
     }
 
     public ChoreStatsResponse getStats() {
         long total = chores.size();
-        long open = chores.stream().filter(chore -> "OPEN".equalsIgnoreCase(chore.status())).count();
-        long completed = chores.stream().filter(chore -> "DONE".equalsIgnoreCase(chore.status())).count();
-        long overdue = chores.stream().filter(chore -> chore.dueDate().isBefore(LocalDate.now())).count();
+        long open = chores.stream().filter(chore -> "OPEN".equalsIgnoreCase(chore.getStatus().toString())).count();
+        long completed = chores.stream().filter(chore -> "DONE".equalsIgnoreCase(chore.getStatus().toString())).count();
+        long overdue = chores.stream()
+                .filter(chore -> chore.getDueDate().isBefore(LocalDate.now()))
+                .filter(chore -> chore.getCompletedAt() != null).count();
         return new ChoreStatsResponse(total, open, completed, overdue);
     }
 }
